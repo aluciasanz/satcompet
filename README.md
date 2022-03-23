@@ -1,23 +1,25 @@
 # satcompet
 Adriana Sanz 22/05/2017  
-Viral competition with a satellite using a simple compartmental model of two virus in competition, one of them assisted by a satellite.  
-  *Fist order system of equations:  
-    h' = g - (d +p_x*x+p_y*y + p_sy*s)*h  
-    x' = (p_x*h - (d + d_x))*x  
-    y' = (p_y*h - (d + d_y) - p_s*s)*y + p_Y*s*h  
-    s' = (p_s*y -(d + d_s) + p_sy*h)*s  
-  *Variables:  
-   -h heathy hosts  
-   -x infected hosts by virus x (competitor virus) 
-   -y infected hosts by virus y (helper virus) 	
-   -s infected hosts by virus y and satellite  
-  *Parameters:  
-    -g linear growth rate  
-    -p_i transmision rate i E {x,y}  
-    -d_i decay rate i E {x,y}  
+Viral competition with a satellite using a simple compartmental model of two virus in competition, one of them assisted by a satellite.
+<dl>
+<dt>Fist order system of equations:</dt>
+	<dd>h' = g - (d +p_x*x+p_y*y + p_sy*s)*h</dd>
+	<dd>x' = (p_x*h - (d + d_x))*x</dd>
+	<dd>y' = (p_y*h - (d + d_y) - p_s*s)*y + p_Y*s*h </dd>
+	<dd>s' = (p_s*y -(d + d_s) + p_sy*h)*s</dd>
+<dt>Variables:</dt>
+	<dd>h heathy hosts</dd>
+	<dd>x infected hosts by virus x (competitor virus)</dd> 
+	<dd>y infected hosts by virus y (helper virus)</dd>
+	<dd>s infected hosts by virus y and satellite</dd> 
+<dt>Parameters:</dt>
+	<dd>g income rate of uninfected hosts</dd> 
+	<dd>p_i transmision rate i &#8712; {x,y,s}</dd> 
+	<dd>d_i decay rate i &#8712; {x,y,s}</dd>   
+</dl>
 
 ### 1. satcompet.c
-Implements Runge Kutta integration step of the system. Parameters used are: d=0.05; p_x=0.1; p_y=0.1; d_y=0.25; p_s=0.8; p_{sy}=0.04; d_s=0.3. We focus on three phenomena:    
+Implements Runge Kutta integration step of the system. Parameters used are: d=0.05; p_x=0.1; p_y=0.1; d_y=0.25; p_s=0.8; p_{sy}=0.04; d_s=0.3. We study three phenomena:    
   - 1.A - Commensalism: the satellite does not affect the viral competition - use p_Y = 0.0766  
   - 1.B - Mutualism - bistability: the satellite helps the helper virus in the viral competition - use p_Y=0.2  
   - 1.C - Parasitism - coexistence: the satellite helps the competitor virus in the viral competition - use p_Y=0.16
@@ -26,7 +28,7 @@ Implements Runge Kutta integration step of the system. Parameters used are: d=0.
 ```
 $ gcc -std=c99 satcompet.c -o nameofile
 ```
-### 3. Run
+### 3. Run (WARNING:this may take several days)
 ```
 $ ./nameofile
 ```
