@@ -34,26 +34,26 @@ INCLUDES change of parameters
 // DEFINITIONS DECLARATIONS
 ////////////////////////////////////////
 
-#define TIME 25000000
+#define TIME 500000
 //Uncomment the scenario you want to run 	
 /*Commensalism*/
-#define PATH4 "e_gdx_h.dat"
-#define PATH1 "e_gdx_x.dat"
-#define PATH2 "e_gdx_y.dat"
-#define PATH3 "e_gdx_s.dat"  
+#define PATH4 "Data/e_gdx_h.dat"
+#define PATH1 "Data/e_gdx_x.dat"
+#define PATH2 "Data/e_gdx_y.dat"
+#define PATH3 "Data/e_gdx_s.dat"  
 /*Coexistence 
-#define PATH4 "c_gdx_h.dat"
-#define PATH1 "c_gdx_x.dat"
-#define PATH2 "c_gdx_y.dat"
-#define PATH3 "c_gdx_s.dat"*/
+#define PATH4 "Data/c_gdx_h.dat"
+#define PATH1 "Data/c_gdx_x.dat"
+#define PATH2 "Data/c_gdx_y.dat"
+#define PATH3 "Data/c_gdx_s.dat"*/
 /*Bistability
-#define PATH4 "b_gdx_h.dat"
-#define PATH1 "b_gdx_x.dat"
-#define PATH2 "b_gdx_y.dat"
-#define PATH3 "b_gdx_s.dat"*/ 
+#define PATH4 "Data/b_gdx_h.dat"
+#define PATH1 "Data/b_gdx_x.dat"
+#define PATH2 "Data/b_gdx_y.dat"
+#define PATH3 "Data/b_gdx_s.dat"*/ 
 
-#define U 100 // matrix size
-#define V 100
+#define U 500 // matrix size
+#define V 500
 
 //Declare functions
 
@@ -100,7 +100,7 @@ int main(){
 	/*Coexistence
 	param[9]=0.016;//p_Y*/	
 
-	double tstep=0.001; // time step
+	double tstep=0.01; // time step
 
 ////////////////////////////////////////	
 // File IO
