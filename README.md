@@ -28,7 +28,7 @@ Implements Runge Kutta integration step of the system. Parameters used are: d=0.
 ```
 $ gcc -std=c99 satcompet.c -o nameofile
 ```
-### 3. Run (WARNING:this may take several days)
+### 3. Run (WARNING:this could take ~ 1 day to run)
 ```
 $ ./nameofile
 ```
