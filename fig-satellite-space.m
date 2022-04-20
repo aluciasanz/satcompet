@@ -1,4 +1,4 @@
-% Adriana Sanz 14/0672017
+% Adriana Sanz 14/06/2017
 % this script is to visualice parameter space and bifurcation diagrams from
 % satcompet.c
 clear
@@ -21,16 +21,18 @@ bh=importdata(strcat(name,'h.dat')); % H (d_x,g)*
 bx=importdata(strcat(name,'x.dat')); % X (d_x,g)*
 by=importdata(strcat(name,'y.dat')); % Y (d_x,g)*
 bs=importdata(strcat(name,'s.dat')); % S (d_x,g)*
+
 %% Parameters
-pars.g=1;	
-pars.d=0.05;	
-pars.px=0.1;	
-pars.py=0.1;	
-pars.dx=0.25;	
-pars.dy=0.25;	
-pars.ps=0.8;
-pars.ds=0.3;
-pars.psy=0.04;
+
+pars.g=1;	% plant rate
+pars.d=0.05;	% decay rate of healthy hosts
+pars.px=0.1;	% transmission rate of virus x
+pars.py=0.1;	% transmission rate of virus y
+pars.dx=0.25;	% decay rate of infected hosts X
+pars.dy=0.25;	% decay rate of infected hosts Y
+pars.ps=0.8;    % transmission rate of satellite s
+pars.ds=0.3;    % decay rate of infected hosts S
+pars.psy=0.04;  % co-transmission rate of satellite s and helper virus y
 
 %% Create the canvas
 size=length(es);
@@ -51,23 +53,32 @@ Cx=(cx>lim).*13;
 Cy=(cy>lim).*20;
 Cs=(cs>lim).*5;
 %% Figure 1 - Comensalism
-pars.pY=0.076666;
+pars.pY=0.076666; % transmission rate of virus y without the satellite
+
 figure(1);
 set(gcf, 'Position',  [200, 200, 1200, 450])% set position, width and height of plot
 subplot(1,2,1);
 contourf(scale,scale,(Eh+Ex+Ey+Es));ylabel('d_{x}');xlabel('g');title('y ic');caxis([0 1].*40);colormap('jet')
-
 hold on;
-% vlim dx=0.25
+
+%Plot boundaries
+% vertical lim dx=0.25
 plot(scale,0.25.*ones(1,size),'--r','linewidth',2)
-%hlim g/d=d+dx/px & g/d=d+dy/py
+%horizontal lim g/d=d+dx/px & g/d=d+dy/py
 plot(linspace(pars.d^2/pars.px,0.15,10),linspace(pars.d^2/pars.px,0.15,10).*pars.px./pars.d -pars.d, '--k','linewidth',2)
 plot(ones(1,10).*0.15,linspace(0.25,0.5,10), '--k','linewidth',2)
-%hlim g=
+%horizontal lim g=
 g_hlim=((pars.d+pars.ds-pars.psy*(pars.d+pars.dy)/pars.py)*pars.py/pars.ps+pars.d)*(pars.d+pars.dy)/pars.py;
 plot(ones(1,size).*g_hlim,scale,'--b','linewidth',2)
-hold off;
+% Lim Fx=Fc 
+H=@(dx) (pars.d+dx)/pars.px; 
+S1=@(dx) (-1).*(pars.d + pars.dy - pars.py.*H(dx)).*(pars.d + pars.ds - pars.psy.*H(dx));
+S2=@(dx) pars.ps.*(pars.d+pars.ds - (pars.psy+pars.pY).*H(dx))
+Y=@(dx) (pars.d + pars.ds - pars.psy.*H(dx))./pars.ps
+g_clim=@(dx) H(dx).*(pars.d + pars.py.*Y(dx) + pars.psy.*S1(dx)./S2(dx) + pars.pY.*S1(dx)./S2(dx));
 
+plot(g_clim(scale),scale, '--','Color',[0.8,0.0,0.4],'Linewidth',2); xlim([0.,0.5])
+hold off;
 xlabel('g')
 ylabel('d_x')
 title('(a)R_c=R_y')
@@ -90,23 +101,35 @@ legend('H^*','X^*','Y^*','S^*','Location','Best');
 set(gca, 'fontname','helvetica','fontsize', 16,'linewidth',1.5)
 saveas(gcf,'./Figures/commensalism.pdf','pdf');
 %% Figure 2 - Mutualism (Bistability)
+pars.pY=0.2; % transmission rate of virus y without the satellite
+
 figure(2);
-pars.pY=0.2;
-
 set(gcf, 'Position',  [200, 200, 1200, 450])% set position, width and height of plot
-
 subplot(1,2,1);
 contourf(scale,linspace(0,0.5,481),(Bh+Bx+By+Bs));ylabel('d_{x}');xlabel('g');title('y ic');caxis([0,1]*40);colormap('jet')
 hold on;
 
-% vlim dx=0.25
+% Boundaries
+
+% vertical lim dx=0.25
 plot(scale,0.25.*ones(1,size),'--r','linewidth',2)
-%hlim g/d=d+dx/px & g/d=d+dy/py
+
+%horizontal lim g/d=d+dx/px & g/d=d+dy/py
 plot(linspace(pars.d^2/pars.px,0.15,10),linspace(pars.d^2/pars.px,0.15,10).*pars.px./pars.d -pars.d, '--k','linewidth',2)
 plot(ones(1,10).*0.15,linspace(0.25,0.5,10), '--k','linewidth',2)
-%hlim g=
+
+%horizontal lim Fy(1-gamma)=Fc
 g_hlim=((pars.d+pars.ds-pars.psy*(pars.d+pars.dy)/pars.py)*pars.py/pars.ps+pars.d)*(pars.d+pars.dy)/pars.py;
 plot(ones(1,size).*g_hlim,scale,'--b','linewidth',2)
+
+% Lim Fx=Fc 
+H=@(dx) (pars.d+dx)/pars.px; 
+S1=@(dx) (-1).*(pars.d + pars.dy - pars.py.*H(dx)).*(pars.d + pars.ds - pars.psy.*H(dx));
+S2=@(dx) pars.ps.*(pars.d+pars.ds - (pars.psy+pars.pY).*H(dx))
+Y=@(dx) (pars.d + pars.ds - pars.psy.*H(dx))./pars.ps
+g_clim=@(dx) H(dx).*(pars.d + pars.py.*Y(dx) + pars.psy.*S1(dx)./S2(dx) + pars.pY.*S1(dx)./S2(dx));
+
+plot(g_clim(scale),scale, '.','Color',[0.8,0.0,0.4]); xlim([0.,0.5])
 hold off;
 xlabel('g')
 ylabel('d_x')
@@ -131,16 +154,16 @@ legend('H^*','X^*','Y^*','S^*','Location','Best');
 set(gca, 'fontname','helvetica','fontsize', 16,'linewidth',1.5)
 saveas(gcf,'./Figures/mutualism.pdf','pdf');
 %% Figure 3 - Parasitism (coexistence)
+pars.pY=0.016; % transmission rate of virus y without the satellite
+
 figure(3);
-pars.pY=0.016;
-
 set(gcf, 'Position',  [200, 200, 1200, 450])% set position, width and height of plot
-
 subplot(1,2,1);
 contourf(scale,scale,(Ch+Cx+Cy+Cs));ylabel('d_{x}');xlabel('g');title('y ic');caxis([0 1].*40);colormap('jet')
-
 hold on;
-% vlim dx=0.25
+
+% Plot the boundaries
+% vertical lim dx=0.25
 plot(scale,0.25.*ones(1,size),'--r','linewidth',2)
 %hlim g/d=d+dx/px & g/d=d+dy/py
 plot(linspace(pars.d^2/pars.px,0.15,10),linspace(pars.d^2/pars.px,0.15,10).*pars.px./pars.d -pars.d, '--k','linewidth',2)
@@ -148,6 +171,14 @@ plot(ones(1,10).*0.15,linspace(0.25,0.5,10), '--k','linewidth',2)
 %hlim g=
 g_hlim=((pars.d+pars.ds-pars.psy*(pars.d+pars.dy)/pars.py)*pars.py/pars.ps+pars.d)*(pars.d+pars.dy)/pars.py;
 plot(ones(1,size).*g_hlim,scale,'--b','linewidth',2)
+% Fx=Fc lim
+H=@(dx) (pars.d+dx)/pars.px; 
+S1=@(dx) (-1).*(pars.d + pars.dy - pars.py.*H(dx)).*(pars.d + pars.ds - pars.psy.*H(dx));
+S2=@(dx) pars.ps.*(pars.d+pars.ds - (pars.psy+pars.pY).*H(dx))
+Y=@(dx) (pars.d + pars.ds - pars.psy.*H(dx))./pars.ps
+g_clim=@(dx) H(dx).*(pars.d + pars.py.*Y(dx) + pars.psy.*S1(dx)./S2(dx) + pars.pY.*S1(dx)./S2(dx));
+plot(g_clim(scale),scale, '--','Color',[0.8,0.0,0.4],'Linewidth',2); xlim([0.,0.5])
+
 hold off;
 
 xlabel('g')
